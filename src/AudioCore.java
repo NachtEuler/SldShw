@@ -14,7 +14,7 @@ class AudioCore
 	public static AudioCore loadAudio(String fn, AudioCore ac)
 	{	File f = SST.loadFile(fn);
 		if(f==null)
-		{	SST.post(new Object(),fn);
+		{	SST.post(new AudioCore(null),fn+"has a problem");
 		}
 		if(f.isFile())
 		{	ac.next = new AudioCore(f.toURI().toString());

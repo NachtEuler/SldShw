@@ -18,8 +18,8 @@ class SST
 
 	//parse line by spaces preserving items in qoutes
 	public static String[] parseLine(String s)
-	{	String[] out;		//eventual return
-		String[] work1;		//tokens by qoutes, and uniformization junk
+	{	String[] out;
+		String[] work1;	//tokens by qoutes, and uniformization junk
 		String[][] work2;	//subtokens by spaces
 		String tmp;			//for trimming
 		int cnt = 0;
@@ -45,8 +45,8 @@ class SST
 				work1[cnt++]=tmp;
 		}
 
-		work2 = null;
-		out = new String[cnt];				//consolidated to perfect length
+		work2=null;
+		out = new String[cnt];			//consolidated to perfect length
 		for(int i=0; i<cnt; i++)
 			out[i]=work1[i];
 		return out;
