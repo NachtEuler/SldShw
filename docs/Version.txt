@@ -1,0 +1,45 @@
+
+	SldShw - version 1.0
+	
+	This version of SldShw is an original creation for use on a church slide
+	show. The motivation for creating the program was to produce a simple but
+	high quality presentation from folders of ordered files in the fashion of
+	Windows Photo Viewer (avoiding slide-by-slide work in MS Power Point 97);
+	but to go beyond Windows Photo Viewer in terms of functionality including:
+		- better speed control (to synchronize with music duration)
+		- mp3 playback (synchronized to start)
+		- smoother transitions
+		- custom background for images which don't fill the screen
+		- non-looping behavior
+		
+	As I worked on the project I added things out of necessity or desire, which
+	were not part of my original plans. The main tweaks had to be done to make
+	the presentation run in a timely fashion:
+		- switched from java.awt.Timer to separate threads with sleep:
+			Apparently some of the image methods populate the Event queue and
+			prevent Timer's events from being received promptly when issued.
+		- prerender/buffer transitions to playback at adequate speed
+		- added timing analysis to track lost time due by the program
+		  (especially to rendering) and shorten delays as needed.
+		- created a file-based input to describe presentations:
+			A single presentation this could have been hard coded but do to
+			the number of excess pictures it was decided a separate looped
+			presentation would be played after the service.
+		- added multiple scaling schemes and transitions to determine what
+		  would look best:
+			While scaling to fit is the obvious choice for picture, the option
+			to not scale was a great convenience for transparent PNGs to
+			produce higher quality text.
+		[The following are mostly my desired extras]
+		- Handled multiple monitors with GraphicsDevice:
+			Otherwise, the external monitor/projector must be the default or
+			you duplicate the display (icky for 9:16 laptop and 3:4 projector)
+		- Added multiple >video capabilities to go with multiple monitors, and
+		  the :link command for complex slidecore graphs
+		- Added :window command and functionality for debugging on a single
+		  monitor.
+		- Added SldShwLAN.java and :remote command to start an already loaded
+		  presentation remotely:
+			The server uses multicast to advertise it's address and port,
+			which are received by a small client for Android.
+		

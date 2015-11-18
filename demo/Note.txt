@@ -1,0 +1,3 @@
+Provide your own images and music:
+.JPG .PNG .BMP     should go in Slides
+.MP3 .WAV          should go in Songs

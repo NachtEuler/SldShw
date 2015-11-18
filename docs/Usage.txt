@@ -1,0 +1,196 @@
+
+		--- Creating a Slide Show from a File ---
+
+ A file for a slide show is a series of text describing the contents and order
+ of the show. Plain text editors (e.g. notepad) should be use. WYSIWYG editors
+ (e.g. MS Word) add formatting characters and headers which will not be parsed
+ correctly by SldShw. The data is broken up by sections which follow a general
+ theme of listing files or directories, relative to the location of the slide
+ show file or by absolute path. The example shown below have comments to the
+ right following "|" which cannot be included or imitated in practice. The
+ example is meant to showcase most of the features, much simpler presentations
+ can be assembled as well.
+ 
+ --- EXAMPLE SLIDESHOW FILE ---
+> Audio				| begins the audio sequence (there can only be one)
+intro_song.mp3			| plays intro_song.mp3
+: loop				| start of a loop
+music_folder			| plays all files in music_folder
+: end				| end sequence, the returns to start of the loop
+				|
+> Video				| begins a video sequence
+: background back.jpg		| loads back.jpg as background (before monitors)
+: monitor 1			| the sequence will play on the 1st monitor/screen
+intro_1.jpg			| shows intro_1.jpg, scaled to fit and cross fade
+intro_2.png 0 - 2 -		| shows intro_1.jpg, no scaling and through fade
+picture_folder			| shows all files in picture_folder, fit and cross fade
+: end				| end this sequence, fade to black
+				|
+> Video				| begins another video sequence
+: background back2.jpg		| loads another background
+: trans 2			| starts with a trough fade transitions
+picture_folder2	2 - - -		| shows all files in another folder, scaled to fill
+: trans 2			| through fades at the end of the folder
+: loop				| start of a loop
+finale.jpg - - 0 -		| shows finale.jpg, with cut transition (to finale.jpg)
+: end				| end this sequence, show finale indefinitely
+				| sequence will be shown on the last available monitor
+
+
+ --- ANATOMY OF A SLIDE ---
+ 
+ Each slide consist of an image to be displayed and set of parameter saying
+ how it is displayed and for how long, and what transition follows it and for
+ how long. A timeline over the slide in play looks something like this:
+  
+   ... prior trans |         image          | transition |  next slide ...
+   ----------------+------------------------+------------+----------------
+                   | one slide's data cover this section |                
+
+ The four parameters governing each slide can be specified for each slide in
+ a sequence using the commands described in the following section. These
+ parameters are as follows:
+ 	scale		- how the image will be scaled on the screen
+ 	length		- the duration of the image in seconds
+ 	trans		- the effect used in the transition
+ 	span		- the duration of the the transition in seconds
+ All parameters use numerical values. The length and span can be decimals, but
+ the scale and trans are numerical codes corresponding to special styles.
+ These styles are listed below:
+ 
+ SCALING CODES AND STYLES
+	0	NONE - the image is displayed in it's own resolutions, which is
+		best for images with transparency.
+	1	FIT - the image scales to the screens interior, but preserving it's
+		own aspect ratio.
+	2	FILL - the image scales fill the screen, preserving it's own aspect
+		ratio, but some of the image will be clipped by the screen bounds.
+		
+ TRANSITION CODES AND STYLES
+	0	CUT - the image switches abruptly to the next one.
+	1	CROSS FADE - the image slowly fades directly into the next one.
+		Sometimes called DISOLVE.
+	2	V FADE - the image fades out, showing the background, then the next
+		image fades in. Sometimes called THROUGH FADE.
+	3	X FADE - the image fades out while the next images fades in.
+		Very similar to the cross fade, but the background is visible through
+		the two fading images.
+	
+
+
+
+ --- COMMANDS ---
+ 
+ All commands begin in one of three ways. Prefix exist specifically
+ to separate special commands from file names.
+ 	>	Start a new audio or video sequence (there can be only one audio)
+ 	:	Modify the audio or video sequence
+ 		No prefix, line begins with file or directory to load from
+ Below are all the special commands formats. Lines will contain items in
+ brackets (e.g. [file]) which denote a variable to be replaced with the
+ specified data (e.g. [file] might be "Photos\pic2.jpg").
+ 
+ 
+ 
+ --- VIDEO COMMANDS ---
+ 
+ : background [file]
+ 	Loads [file] as the background on all future monitors.
+ 	
+ : monitor [id]
+ 	Specifies that monitor number [id] will show this sequence. A monitors
+ 	if should correspond to the OS display numbers, which in Windows 7 can
+ 	be found with the Screen Resolution or Display Settings.
+ 	
+ : window [id] [width] [height] [xPos] [yPos]
+	Creates a window on monitor [id] to show this sequence. The [width] and
+	[height] are decimal ratios of the screen. The [xPos] and [yPos] are
+	decimal ratios of the screen, at which the center of the window is to
+	be shown.
+ 	
+ : loop
+ 	Specifies that the show should loop back to here upon ending.
+ 	NOTE: Some commands may not work as expected following loop. As said
+ 	commands modify the last loaded slide, which was created before loop.
+ 	
+ : [parameter] [value]
+ 	Specifies the last loaded slide's [parameter] be [value]. Parameter
+ 	information can be found in the Slide Anatomy Section.
+	
+ [file]
+	Loads [file] as a slide using the default parameters.
+	
+ [file] [scale] [length] [trans] [span]
+	Loads [file] as a slide using the specified parameters.
+	NOTE: If any of the values should be default, replace the corresponding
+	entry with a hyphen/minus (e.g. pic 1 - - - only changes the scale).
+	
+ [folder]
+	Loads all files in [folder] as slides using the default parameters.
+	
+ [file/folder] [scale] [length] [trans] [span]
+	Loads all files in [folder] as slides using the specified parameters.
+	NOTE: If any of the values should be default, replace the corresponding
+	entry with a hyphen/minus (e.g. pic 1 - - - only changes the scale).
+ 	
+ : end
+ 	The end of a sequence. If a loop has been specified, the video will loop
+ 	back to that point. Otherwise the video will go black after the final
+ 	slide.
+ 	
+
+
+ --- AUDIO COMMANDS ---
+ 
+ : loop
+ 	Specifies that the audio should loop back to here upon ending.
+ 	
+ [file]
+ 	Loads [file] as a song.
+ 	
+ [folder]
+ 	Loads all files in [folder] as songs. Does not include subfolders.
+ 	
+ : end
+ 	The end of the audio sequence. If a loop has been specified, audio will
+ 	loop back to that point. Otherwise audio stops.
+ 	
+ 	
+ --- DEFAULT COMMANDS ---
+ There can also be one Default sequence at the top of the file to modify the
+ default settings for a slide show. The supported options are:
+ 
+ : [parameter] [value]
+ 	Specifies the default value of [parameter] in new sequences be [value].
+ 	Parameter information can be found in the Slide Anatomy Section.
+ 	
+ : FPS [value]
+ 	Specifies that [value] frames per second used for calculations made to
+ 	render and time transitions.
+ 	NOTE: The default value is 25 for good reasons, it is slightly above
+ 	video standards of 24 FPS, and perfect divisor of 1000ms removing the
+ 	the possibility of accumulating rounding errors.
+ 	
+ : latency [value]
+ 	Specifies the program monitor audio play back every [value] ms. If a track
+ 	ends it can take 0 to [value] ms to note that it has ended and begin the
+ 	track.
+ 	NOTE: The default value is 10ms. Setting the value to low numbers
+ 	(especially 0) may consume CPU time and negatively affect this or other
+ 	programs.
+ 	
+ : fast
+ 	Specifies that images are scaled using a fast strategy which may offer
+ 	increased performance for slower machines, but lower quality.
+ 	
+ : smooth
+ 	Specifies that images are scaled using a smooth strategy which may offer
+ 	higher quality but hurt performance on slower machines. This strategy is
+ 	used by default.
+ 	
+ : remote
+ 	Enables a server-module to advertise this program on a LAN device, and
+ 	receive start and quit instructions from a client.
+ 	NOTE: This feature uses multicasting and is designed only for devices
+ 	sharing a common router. It simply may not work on some networks.
+ 	

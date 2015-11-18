@@ -1,0 +1,41 @@
+
+	The source code has been broken into the following parts:
+	
+	SldShw.java
+		This is the entry point for the program, the KeyListener for starting
+		or stopping all facets of the presentation, the presentation-file
+		parser and responsible for assembling all screens, slidecores,
+		and audiocores into a usable presentation.
+	
+	Screen.java
+		This JFrame is responsible for loading and scaling images, applying
+		background, buffering transitions, and displaying the resulting
+		images as prompted.
+		
+	SlideCore.java
+		Manages and executes slides. The file contains:
+			SlideCore - a node containing a image filename and data describing
+			the style of the slide, and pointing to the next slidecore.
+			SlideTracker - an engine to run on a separate thread which loads
+			slides and updates screens.
+			
+	AudioCore.java
+		Manages and executes audio content. The file contains:
+			AudioCore - a node containing a music filename, and pointing to the
+			next audiocore.
+			AudioTracker - an engine to run on a separate thread which loads
+			audiocores to play music.
+			
+	SldShwLAN.java
+		A module for LAN interaction, creating a kind of WiFi remote control.
+		The file contains:
+			SldShwLAN - a thread for handling server responsibilities,
+			connecting with a single client at time, and waiting for socket
+			input to enact the corresponding action in SldShw.
+			ServerAdvert - a thread to multicast on LAN 5 times per second,
+			allowing any client program to know where the server is.
+			
+	SST.java
+		A set of static methods to make my life a bit easier, given Java's
+		want of macros. The gist of the acronym is "Some Static Tools".
+		
