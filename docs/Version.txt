@@ -1,4 +1,24 @@
 
+	SldShw - current changes
+
+	The current version of SldShw supports Ad-Hoc presentation from a single
+	directory. YAY! Just run SldShw from a directory filled with images and
+	music (only mp3 at the moment) and it will loop through everything.
+
+	Also some minor changes to the parser, ending each sequence is not required.
+
+	The current goals for the project are:
+		- add command-line switchs for ad-hoc parameters & features
+		- add command-line for seperate music and file folders
+		- add command-line help
+		- change file type for sldshw's to exclude other txt documents
+		- provide cleaner/readable features for building SldShws, should
+			be shared by SSParser, etc.
+		- make SSParser only load approriate types
+		- make File ubiquitous, instead of using names in cores
+
+
+
 	SldShw - version 1.0
 	
 	This version of SldShw is an original creation for use on a church slide

@@ -89,8 +89,12 @@ finale.jpg - - 0 -		| shows finale.jpg, with cut transition (to finale.jpg)
  Below are all the special commands formats. Lines will contain items in
  brackets (e.g. [file]) which denote a variable to be replaced with the
  specified data (e.g. [file] might be "Photos\pic2.jpg").
- 
- 
+
+ A sequence will attempt to resolve a few issues:
+	- Automatically add a monitor if not specified
+	- Infer ": end" when a new sequence is started prematurely
+
+
  
  --- VIDEO COMMANDS ---
  
