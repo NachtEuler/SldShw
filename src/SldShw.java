@@ -32,10 +32,8 @@ public class SldShw implements KeyListener
 		else if(args.length == 1) //load from file
 			new SldShw(args[0]);
 		else
-		{	System.out.println("Running tiny demo...");
-			new SldShw("..\\demo\\demo.txt");
-			//
-			//return;
+		{	System.out.println("Arguments not recognized");
+			return;
 		}
 	}
 
