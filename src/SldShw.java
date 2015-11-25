@@ -2,6 +2,11 @@
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.io.StringReader;
+import java.io.File;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.util.List;
+import java.util.LinkedList;
 
 public class SldShw implements KeyListener
 {
@@ -17,15 +22,55 @@ public class SldShw implements KeyListener
 	//SldShw Entry Point
 	public static void main(String[] args)
 	{	String temp;
-		if(args.length == 1) //load from file
-			temp = args[0];
+		/*File here = new File("..\\demo");
+		File[] fs = here.listFiles(SSFileSystem.imageFilter);
+		System.out.println("---");
+		for(int i=fs.length; i--!=0;)
+			System.out.println(fs[i]);*/
+		if(args.length == 0)
+			new SldShw();
+		else if(args.length == 1) //load from file
+			new SldShw(args[0]);
 		else
 		{	System.out.println("Running tiny demo...");
-			temp = "..\\demo\\demo.txt";
+			new SldShw("..\\demo\\demo.txt");
 			//
 			//return;
 		}
-		new SldShw(temp);
+	}
+
+	//Constructs an ad-hoc slideshow from current location
+	public SldShw(){
+		SSFileSystem fs = new SSFileSystem();
+		List<File> images = new LinkedList<File>();
+		List<File> songs = new LinkedList<File>();
+		fs.listFiles(images,songs,true);
+		//make slide cores
+		st = new SlideTracker[3];
+		st[st_cnt++]=new SlideTracker();
+		GraphicsDevice GD = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		st[0].addScreen(new Screen("SldShw",GD,this,null));
+		SlideCore last = new SlideCore(null,0.0);
+		st[0].slide = last;
+		while(images.size()!=0)
+			last = SlideCore.loadSlide(images.remove(0).getAbsolutePath(),last);
+		last.next = st[0].slide.next;
+		//make audio
+		AudioCore first = new AudioCore(null);
+		AudioCore lastac = first;
+		while(songs.size()!=0)
+			lastac = AudioCore.loadAudio(songs.remove(0).getAbsolutePath(),lastac);
+		lastac.next=first.next;
+		at = new AudioTracker(first.next);
+		//finish initializing
+		for(int i=0; i<st_cnt; i++)
+			st[i].initialize();
+		lock = false;
+		System.out.println(" Ready Sir!");
+		if(rem!=null)
+		{	System.out.println(" Slideshow Remote Started");
+			rem.start();
+		}
 	}
 
 	//Constructs a slides from a source file
@@ -84,5 +129,6 @@ public class SldShw implements KeyListener
 
 
 	}
+	*/
 
 }

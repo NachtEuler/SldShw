@@ -66,3 +66,4 @@ class SST
 	static void post(Object source, String note)
 	{	System.out.println(" --- "+source.getClass().getName()+": "+note);	}
 }
+
