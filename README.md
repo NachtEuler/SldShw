@@ -23,6 +23,7 @@ June 2015.
 - Multiple Monitors
 - Multiple Transition Styles
 - Custom Scripting of Presentations
+- Pause and Sync accorss multiple mointors and audio.
 - Remote Control via WiFi (client yet to be added)
 
 <br>
@@ -31,7 +32,7 @@ June 2015.
 
 The Parsing code was hacked out in utilitarian fashion for the original
 presentation, which needed the the input file to assign specific timing
-to title slides. It has been moved to make remove for commandline features,
+to title slides. It has been moved to make room for commandline features,
 with the ultimate goal of making the program even more ad-hoc. Eventually,
 I intend for music & pictures be culled together from the current directory
 and run in regular loop, similar to the function of Windows Photo Viewer.
