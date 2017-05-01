@@ -5,7 +5,6 @@
 // Only a single remote can be connected at one time. If we fail to connect, or disconnect
 // a client server begins again, in which case reconnecting is possible.
 //
-
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.net.MulticastSocket;

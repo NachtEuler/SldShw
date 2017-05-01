@@ -6,6 +6,7 @@ import javafx.scene.media.AudioClip;
 class AudioCore
 {	String URL;
 	AudioCore next;
+	LockID lid;
 
 	AudioCore(String URL)
 	{	this.URL = URL;
@@ -40,24 +41,38 @@ class AudioTracker extends Thread
 
 	AudioTracker(AudioCore start)
 	{	core=start;
-		if(core !=null)
-		current = new AudioClip(core.URL);
+		if(core!=null && core.URL!=null)
+			current = new AudioClip(core.URL);
 	}
 
 	public void run()
 	{	if(core==null) return;
-		{
-		current.play();								// start playing
+
+		if(current!=null)
+		current.play();										// start playing
+
 		while(core.next!=null)
-		{	next = new AudioClip(core.next.URL);	// preload next
-			while(current.isPlaying())				// wait for finish
-				SST.sleep(this,latency);
-			next.play();							// start playing next
-			current = next;							// move to next core
+		{
+			if(core.next.URL!=null)
+				next = new AudioClip(core.next.URL);	// preload next
+			else
+				next=null;
+
+			if(current!=null)
+				while(current.isPlaying())					// wait for finish
+					SST.sleep(this,latency);
+
+			if(core.lid!=null)								// enters a lock to wait and sync
+				core.lid.enter();
+
+			if(next!=null)
+				next.play();									// start playing next
+
+			current = next;									// move to next core
 			core=core.next;
 		}
-		while(current.isPlaying())					// wait for finish
+		while(current.isPlaying())							// wait for finish
 			SST.sleep(this,latency);
-		}
+
 	}
 }

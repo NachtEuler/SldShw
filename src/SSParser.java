@@ -2,7 +2,6 @@
 // This is a refactoring of code originally in SldShw.java
 // to make room for new code
 // It still directly interacts with SldShw variables as before
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -10,6 +9,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.Image;
+import java.util.HashMap;
 
 class SSParser {
 
@@ -27,7 +27,7 @@ class SSParser {
 	GraphicsEnvironment GE;
 	GraphicsDevice[] GD;
 	boolean[] GD_av;
-	SlideCore[] sLinks;
+	HashMap<String,SlideCore> sLinks;
 
 	SSParser(String file_name, SldShw sld_shw){
 		this.file_name = file_name;
@@ -65,7 +65,7 @@ class SSParser {
 		for(int i=0; i<GD.length; i++)
 			if(GD[i].isFullScreenSupported())	GD_av[i]=true;
 			else	GD_av[i]=false;
-		sLinks = new SlideCore[10];
+		sLinks = new HashMap<String,SlideCore>(32);
 
 		//read in first line
 		updateLine();
@@ -213,11 +213,26 @@ class SSParser {
 		AudioCore first = new AudioCore(null);
 		AudioCore last = first;
 		AudioCore loop = null;
+		//makes starting delay into a Lock
+		last.lid = sld_shw.synclocks.addPause();
+
 		//wile there is stuff to read
 		sequence:
 		while(token!=null){
 			if(token.length>1 && token[0].equals(":")){
 			switch(token[1]+"-"+token.length){
+			/////////////////////////////////////////////////////////////////// SYNC
+				case "sync-3":
+					last.lid = sld_shw.synclocks.addSync(token[2]);
+				break;
+			/////////////////////////////////////////////////////////////////// LOCK
+				case "lock-3":
+					last.lid = sld_shw.synclocks.addLock(token[2]);
+				break;
+			/////////////////////////////////////////////////////////////////// SYNC
+				case "pause-2":
+					last.lid = sld_shw.synclocks.addPause();
+				break;
 			/////////////////////////////////////////////////////////////////// LOOP
 				case "loop-2":
 					loop = last;
@@ -249,7 +264,7 @@ class SSParser {
 		// END (COVERS IMPLICIT END ON EOF)
 		if(sld_shw.at!=null)
 			SST.post(this,"Only one audio sequence is allowed");
-		sld_shw.at = new AudioTracker(first.next);
+		sld_shw.at = new AudioTracker(first);
 		if(loop!=null)
 			last.next=loop.next;
 	}
@@ -270,6 +285,8 @@ class SSParser {
 			SST.post(this,"Too many video sequences...");
 			return;
 		}
+		//makes starting delay into a Lock
+		last.lid = sld_shw.synclocks.addPause();
 
 		sequence:
 		while(token!=null){
@@ -347,19 +364,26 @@ class SSParser {
 					else
 						SST.post(this,"Cannot use negative trans"); //TODO
 				break;
+			/////////////////////////////////////////////////////////////////// SYNC
+				case "sync-3":
+					last.lid = sld_shw.synclocks.addSync(token[2]);
+				break;
+			/////////////////////////////////////////////////////////////////// LOCK
+				case "lock-3":
+					last.lid = sld_shw.synclocks.addLock(token[2]);
+				break;
 			/////////////////////////////////////////////////////////////////// LINK
 				case "link-3":
-					temp_i = Integer.parseInt(token[2])-1;
-					if(temp_i>=0 && temp_i<sLinks.length)
-					{	if(sLinks[temp_i]==null)
-							sLinks[temp_i] = last;
-						else
-						{	last.next = sLinks[temp_i].next;
-							linked = true;
-						}
+					SlideCore tempCore = sLinks.get(token[2]);
+					if(tempCore==null){
+						sLinks.put(token[2],last);
+					}else{
+						last.next = tempCore;
 					}
-					else
-						SST.post(this,"Link "+(temp_i+1)+" is out of range");
+				break;
+			/////////////////////////////////////////////////////////////////// PAUSE
+				case "pause-2":
+					last.lid = sld_shw.synclocks.addPause();
 				break;
 			/////////////////////////////////////////////////////////////////// LOOP
 				case "loop-2":

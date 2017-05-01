@@ -1,4 +1,3 @@
-
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.io.StringReader;
@@ -18,6 +17,7 @@ public class SldShw implements KeyListener
 	boolean started=false;
 	boolean lock=true;
 	SldShwLAN rem=null;
+	SSSync synclocks = new SSSync();
 
 	//SldShw Entry Point
 	public static void main(String[] args)
@@ -53,6 +53,8 @@ public class SldShw implements KeyListener
 		while(images.size()!=0)
 			last = SlideCore.loadSlide(images.remove(0).getAbsolutePath(),last);
 		last.next = st[0].slide.next;
+		//makes starting delay into a Lock
+		st[0].slide.lid = synclocks.addPause();
 		//make audio
 		AudioCore first = new AudioCore(null);
 		AudioCore lastac = first;
@@ -69,6 +71,9 @@ public class SldShw implements KeyListener
 		{	System.out.println(" Slideshow Remote Started");
 			rem.start();
 		}
+		//start slideshow
+		if(at!=null) at.start();
+		for(int i=0; i<st_cnt; i++){ st[i].start(); }
 	}
 
 	//Constructs a slides from a source file
@@ -89,6 +94,9 @@ public class SldShw implements KeyListener
 		{	System.out.println(" Slideshow Remote Started");
 			rem.start();
 		}
+		//start slideshow
+		if(at!=null) at.start();
+		for(int i=0; i<st_cnt; i++){ st[i].start(); }
 	}
 
 	//Key Listener Code
@@ -99,13 +107,7 @@ public class SldShw implements KeyListener
 					rem.close();
 				System.exit(0);
 			case KeyEvent.VK_SPACE:		//Start the show
-				if(!started && !lock)
-				{	for(int i=0; i<st_cnt; i++)
-						st[i].start();
-					if(at!=null)
-						at.start();
-					started=true;
-				}
+				synclocks.release();
 				break;
 			default:
 				SST.post(this,"Key "+key_code+" is not supported.");
@@ -115,18 +117,4 @@ public class SldShw implements KeyListener
 	{	action(e.getKeyCode());	}
 	public void keyReleased(KeyEvent e){};
 	public void keyTyped(KeyEvent e){};
-
-
-	/* ENGINE FOR CENTRALIZED CONTROL
-
-	public void run(){
-		int start_ns, ns;
-
-
-
-
-
-	}
-	*/
-
 }

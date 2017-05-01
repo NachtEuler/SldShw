@@ -13,6 +13,7 @@ class SlideCore
 	double dur, trans_dur;
 	int scale_type, trans_type;
 	SlideCore next;
+	LockID lid;
 
 	SlideCore(File img_file, double duration)
 	{	this(img_file, dft_scl_sty, duration, dft_trn_sty, dft_trn_dur);	}
@@ -86,10 +87,17 @@ class SlideTracker extends Thread
 					SST.sleep(this,taskms);
 				taskms=System.currentTimeMillis(); //restart code timing
 			}
+			//lock
+			long heldOverms = 0;
+			if(slide.lid!=null){
+				heldOverms = System.currentTimeMillis();
+				slide.lid.enter();
+				heldOverms -= System.currentTimeMillis();
+			}
 			//end slide
 			trans_frames=1;
 			ms=System.currentTimeMillis();
-			timesms=ms-lastms;
+			timesms=ms-lastms+heldOverms;
 			lossms += timesms-slidems;
 			lastms=ms;
 			//start transition
